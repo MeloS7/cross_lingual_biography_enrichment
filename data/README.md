@@ -1,0 +1,390 @@
+# Data Layout
+
+This directory contains the biography text, extracted claims, and claim
+alignment outputs used by the demo.
+
+All main files are JSONL files: one entity per line, keyed by `qid`.
+
+## Top-Level Structure
+
+```text
+data/
+  Biographies_Text/
+    Claw_4L_300.jsonl
+    Claim_based_enrich/
+    MT_based_enrich/
+      az/
+      fr/
+      zh/
+    Raw_enrich/
+
+  Claims/
+    Claims_for_original_biographies/
+      complete_data/
+      pure_claims/
+    Claims_for_enriched_biographies/
+      Claim_based_enrich/
+        complete_data/
+        pure_claims/
+      MT_based_enrich/
+        az/
+          complete_data/
+          pure_claims/
+        fr/
+          complete_data/
+          pure_claims/
+        zh/
+          complete_data/
+          pure_claims/
+      Raw_enrich/
+        complete_data/
+        pure_claims/
+    Claim_Alignment_before_after_enrich/
+      Claim_based_enrich/
+      MT_based_enrich/
+      Raw_enrich/
+```
+
+`complete_data/` files keep the full claim extraction output, including
+`excerpt`, `sent_idx`, structured slots, and `source_sent`.
+
+`pure_claims/` files keep only the demo-friendly claim text:
+
+```json
+{
+  "qid": "...",
+  "name": "...",
+  "occupations": ["..."],
+  "country_group": "...",
+  "target_lang": "...",
+  "claims": [{"claim": "..."}]
+}
+```
+
+## Biographies
+
+### Wikipedia Biographies
+
+File:
+
+```text
+data/Biographies_Text/Claw_4L_300.jsonl
+```
+
+Rows: 300 entities.
+
+Important fields:
+
+- `qid`
+- `name`
+- `occupations`
+- `country_group`
+- `target_lang`
+- `en_title`
+- `target_title`
+- `en_url`
+- `target_url`
+- `en_bio_clean`: Wikipedia English biography
+- `target_bio_clean`: Wikipedia non-English biography
+
+### Enriched Biographies
+
+Each enriched biography file contains:
+
+- `qid`
+- `name`
+- `target_lang`
+- `original_en_bio`
+- `enhanced_en_bio`
+
+`original_en_bio` is aligned with `en_bio_clean` in
+`Claw_4L_300.jsonl`.
+
+The enriched files are:
+
+```text
+data/Biographies_Text/Claim_based_enrich/
+  enriched_en_bio_final_gemma4_31b_it.jsonl
+  enriched_en_bio_final_mistral_small_3_2_24b_it.jsonl
+  enriched_en_bio_final_qwen3_6_27b.jsonl
+
+data/Biographies_Text/Raw_enrich/
+  enriched_en_bio_final_gemma4_31b_it.jsonl
+  enriched_en_bio_final_mistral_small_3_2_24b_it.jsonl
+  enriched_en_bio_final_qwen3_6_27b.jsonl
+
+data/Biographies_Text/MT_based_enrich/{az,fr,zh}/
+  enriched_en_bio_final_gemma4_31b_it.jsonl
+  enriched_en_bio_final_mistral_small_3_2_24b_it.jsonl
+  enriched_en_bio_final_qwen3_6_27b.jsonl
+```
+
+`Claim_based_enrich/` and `Raw_enrich/` files contain 300 entities each.
+`MT_based_enrich/{az,fr,zh}/` files contain 100 entities per language.
+
+## Claims
+
+### Claims Extracted From Original Wikipedia Biographies
+
+Complete extraction output:
+
+```text
+data/Claims/Claims_for_original_biographies/complete_data/
+  CLAW_4L_300_en_claims_gpt_5_1.jsonl
+  CLAW_4L_300_target_claims_gpt_5_1.jsonl
+```
+
+Pure claim files for display:
+
+```text
+data/Claims/Claims_for_original_biographies/pure_claims/
+  CLAW_4L_300_en_claims_gpt_5_1_pure_claims.jsonl
+  CLAW_4L_300_target_claims_gpt_5_1_pure_claims.jsonl
+```
+
+Meaning:
+
+- `*_en_claims_*`: claims extracted from `en_bio_clean`
+- `*_target_claims_*`: claims extracted from `target_bio_clean`
+
+Use `pure_claims/` for displaying the list of claims. Use
+`complete_data/` when the demo needs to map a claim back to the source
+sentence or excerpt.
+
+### Claims Extracted From Enriched Biographies
+
+Complete extraction output and pure claim files follow the same structure:
+
+```text
+data/Claims/Claims_for_enriched_biographies/Claim_based_enrich/
+  complete_data/
+  pure_claims/
+
+data/Claims/Claims_for_enriched_biographies/Raw_enrich/
+  complete_data/
+  pure_claims/
+
+data/Claims/Claims_for_enriched_biographies/MT_based_enrich/{az,fr,zh}/
+  complete_data/
+  pure_claims/
+```
+
+Model files:
+
+```text
+claims_gemma4_31b_it.jsonl
+claims_mistral_small_3_2_24b_it.jsonl
+claims_qwen_3_6_27b.jsonl
+```
+
+In `Raw_enrich/`, the Mistral and Qwen filenames are shorter:
+
+```text
+claims_mistral.jsonl
+claims_qwen3_6.jsonl
+```
+
+Pure files use the `_pure_claims.jsonl` suffix.
+
+## Claim Alignment
+
+Current alignment outputs are stored here:
+
+```text
+data/Claims/Claim_Alignment_before_after_enrich/{method}/{model}/before_after_enrich_verify_{lang}.jsonl
+```
+
+Methods:
+
+```text
+Claim_based_enrich
+MT_based_enrich
+Raw_enrich
+```
+
+Models:
+
+```text
+Gemma-4-31B-it
+Mistral-Small-3.2-24B-Instruct-2506
+Qwen3.6-27B
+```
+
+Languages:
+
+```text
+az
+fr
+zh
+```
+
+There are 27 alignment files: 3 methods x 3 models x 3 languages. Each
+file contains 100 entities.
+
+Each row contains:
+
+- `input_idx`: row index in that alignment input
+- `qid`
+- `meta`
+- `counts`
+- `before_to_after_verifications`
+- `after_to_before_verifications`
+
+Important: in these files, `before` and `after` mean:
+
+- `before` = claims from the original Wikipedia English biography plus
+  claims from the original Wikipedia non-English biography, merged and
+  deduplicated
+- `after` = claims from the enriched English biography generated by the
+  corresponding method/model/language setting
+
+Therefore, the current alignment is not a direct
+`English Wikipedia biography -> enriched English biography` alignment.
+It is:
+
+```text
+(English Wikipedia claims + non-English Wikipedia claims) -> enriched English claims
+```
+
+We do not currently have direct pairwise alignment files for:
+
+- English Wikipedia biography vs enriched English biography only
+- non-English Wikipedia biography vs enriched English biography only
+- English Wikipedia biography vs non-English Wikipedia biography
+- enriched biography from one method/model vs enriched biography from
+  another method/model
+
+Those alignments can be produced later from the claim files, but they are
+not present in the current data.
+
+### Direction And A/B Meaning
+
+In `before_to_after_verifications`:
+
+- `A` = `before_claim`
+- `B` = `after_claim`
+
+In `after_to_before_verifications`:
+
+- `A` = `after_claim`
+- `B` = `before_claim`
+
+So `A` always means the outer claim currently being verified, and `B`
+means the candidate claim.
+
+For the same `(before_claim, after_claim)` pair, the relation is
+directionally flipped between the two views:
+
+```text
+before_to_after A>B  == after_to_before B>A
+before_to_after B>A  == after_to_before A>B
+before_to_after A=B  == after_to_before A=B
+```
+
+The relation labels are symmetric after this normalization, but the
+candidate sets are not guaranteed to be identical because candidates are
+retrieved separately in each direction.
+
+## Demo Task Mapping
+
+### 1. Generated Biographies
+
+For a given entity `e`, the demo should display:
+
+- the Wikipedia English biography
+- the Wikipedia non-English biography
+- the enriched biographies produced by the three enrichment approaches
+
+Use:
+
+```text
+data/Biographies_Text/Claw_4L_300.jsonl
+```
+
+for the Wikipedia biographies:
+
+- `en_bio_clean`
+- `target_bio_clean`
+
+Use:
+
+```text
+data/Biographies_Text/Claim_based_enrich/*.jsonl
+data/Biographies_Text/Raw_enrich/*.jsonl
+data/Biographies_Text/MT_based_enrich/{az,fr,zh}/*.jsonl
+```
+
+for enriched biographies:
+
+- `enhanced_en_bio`
+
+Join records by `qid`.
+
+### 2. Claim Extraction
+
+For a given entity `e` and biography `B`, the demo should display claims
+extracted by the claim extractor.
+
+The biography can be:
+
+- the Wikipedia English biography
+- the Wikipedia non-English biography
+- the enriched biography generated by one of the three methods
+
+Use pure claim files for the display:
+
+```text
+data/Claims/Claims_for_original_biographies/pure_claims/
+data/Claims/Claims_for_enriched_biographies/**/pure_claims/
+```
+
+Use complete files when claim-to-sentence provenance is needed:
+
+```text
+data/Claims/Claims_for_original_biographies/complete_data/
+data/Claims/Claims_for_enriched_biographies/**/complete_data/
+```
+
+In the complete files:
+
+- `decomposition_results[*].sent_idx` gives the sentence/excerpt index
+- `decomposition_results[*].excerpt` gives the extraction context
+- `decomposition_results[*].claims[*].claim` gives the final claim text
+- `decomposition_results[*].claims[*].source_sent` gives the source
+  sentence used by the extractor
+
+### 3. Claim Alignment
+
+For a given entity `e` and two biographies for that entity, the demo
+should display the alignment between claims extracted from each biography
+by the claim alignment module.
+
+Current available alignment data:
+
+```text
+data/Claims/Claim_Alignment_before_after_enrich/{method}/{model}/before_after_enrich_verify_{lang}.jsonl
+```
+
+This supports alignment between:
+
+```text
+before = English Wikipedia claims + non-English Wikipedia claims
+after  = enriched English biography claims
+```
+
+The current files do not provide direct alignment for arbitrary pairs of
+biographies. In particular, there is no direct `(en, en_enriched)` claim
+alignment file. To display a direct alignment between any two specific
+biographies, such as English Wikipedia vs enriched English only, the
+claim alignment module needs to be run for that pair using the extracted
+claim files above.
+
+For the existing before/after files:
+
+- use `before_to_after_verifications` to show how original claims map to
+  enriched claims
+- use `after_to_before_verifications` to show how enriched claims map
+  back to original claims
+- use the embedded `before_claim` and `after_claim` strings for display
+- use `complete_data/` files if the demo needs to recover
+  `source_sent`, `sent_idx`, or `excerpt`
