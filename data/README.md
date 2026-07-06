@@ -307,31 +307,29 @@ enrichment label:
   non-conflicting detail.
 - `B>A`: Claim B contains the content of Claim A and adds additional
   non-conflicting detail.
-- `A<->B`: the two claims are aligned and non-contradictory, but each
+- `A↔B`: the two claims are aligned and non-contradictory, but each
   contains non-conflicting factual detail missing from the other.
 
 For contradicted and not-relevant pairs, the relation can be represented
 as:
 
 - `A⊥B`: the two claims are contradictory.
-- `A-|B`: the two claims are not relevant to each other.
+- `A⊣B`: the two claims are not relevant to each other.
 
 Example claim relations:
 
 | Category | Rel. | Claim A | Claim B |
 | --- | --- | --- | --- |
-| Aligned | `A=B` | Libby Lee Ha-yun attended Ying Wa Girls' School during her high school years. | Libby Lee attended Ying Wa Girls' School during her senior secondary school years. |
-| Aligned | `A>B` | Libby Lee Ha-yun attended Ying Wa Girls' School in Mid-Levels during her high school years. | Libby Lee attended Ying Wa Girls' School during her senior secondary school years. |
-| Aligned | `B>A` | Libby Lee attended Ying Wa Girls' School during her senior secondary school years. | Libby Lee Ha-yun attended Ying Wa Girls' School in Mid-Levels during her high school years. |
-| Aligned | `A<->B` | Libby Lee Ha-yun attended Ying Wa Girls' School in Mid-Levels during her high school years. | Libby Lee attended Ying Wa Girls' School in 1991. |
-| Contradicted | `A⊥B` | Libby Lee Ha-yun attended Ying Wa Girls' School during her high school years. | Libby Lee attended Diocesan Girls' School during her senior secondary school years. |
-| Not Relevant | `A-|B` | Libby Lee Ha-yun attended Ying Wa Girls' School during her high school years. | In 1957, Huang Yifan died in London, England, at the age of 61. |
+| Alig. | `A=B` | Libby Lee Ha-yun attended Ying Wa Girls' School *during her high school years*. | Libby Lee attended Ying Wa Girls' School *during her senior secondary school years*. |
+| Alig. | `A>B` | Libby Lee Ha-yun attended Ying Wa Girls' School **in Mid-Levels** during her high school years. | Libby Lee attended Ying Wa Girls' School during her senior secondary school years. |
+| Alig. | `B>A` | Libby Lee attended Ying Wa Girls' School during her senior secondary school years. | Libby Lee Ha-yun attended Ying Wa Girls' School **in Mid-Levels** during her high school years. |
+| Alig. | `A↔B` | Libby Lee Ha-yun attended Ying Wa Girls' School **in Mid-Levels during her high school years**. | Libby Lee attended Ying Wa Girls' School **in 1991**. |
+| Contr. | `A⊥B` | Libby Lee Ha-yun attended **Ying Wa** Girls' School during her high school years. | Libby Lee attended **Diocesan** Girls' School during her senior secondary school years. |
+| Not Rel. | `A⊣B` | **Libby Lee Ha-yun** attended Ying Wa Girls' School during her high school years. | In 1957, **Huang Yifan** died in London, England, at the age of 61. |
 
-In the examples above, details such as `in Mid-Levels` or `in 1991`
-illustrate additional non-conflicting information on one side of an
-aligned pair. Contradicted pairs differ on a key factual value, such as
-the school name. Not-relevant pairs discuss different factual aspects or
-different entities.
+In the examples above, bold text highlights the key extra details,
+contradictory values, or different entities. Italic text marks
+near-equivalent wording in the `A=B` example.
 
 ## Demo Task Mapping
 
